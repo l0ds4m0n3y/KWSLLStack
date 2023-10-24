@@ -1,6 +1,7 @@
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
-public class SSLStack<E> implements PureStack, Iterable{
+public class SLLStack<E> implements PureStack, Iterable{
     private Node<E> topOfStack;
 
     private static class Node<E> {
@@ -30,48 +31,63 @@ public class SSLStack<E> implements PureStack, Iterable{
     
     @Override
     public boolean empty() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'empty'");
+        return topOfStack == null;
     }
     
     @Override
     public void push(Object element) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'push'");
+        topOfStack = new Node<E>((E)element, topOfStack);
     }
     
     @Override
     public Object pop() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'pop'");
+        Node<E> temp = topOfStack;
+        topOfStack = topOfStack.next;
+        return temp.data;
     }
     
     @Override
     public Object peek() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'peek'");
+        return topOfStack.data;
     }
 
     @Override
-    public Iterator iterator() {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'iterator'");
+    public Iterator<E> iterator() {
+        return new StackIter();
     }
 
     private class StackIter implements Iterator{
+        Node<E> ptr = topOfStack;
 
         @Override
         public boolean hasNext() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'hasNext'");
+            return ptr != null;
         }
 
         @Override
-        public Object next() {
-            // TODO Auto-generated method stub
-            throw new UnsupportedOperationException("Unimplemented method 'next'");
+        public E next() {
+            if(!hasNext()){
+                throw new NoSuchElementException();
+            }
+            Node<E> temp = ptr;
+            ptr = ptr.next;
+            return temp.data;
         }
         
+    }
+
+    @Override
+    public String toString(){
+        StackIter iter = (SLLStack<E>.StackIter) this.iterator();
+        String output = "[";
+        while(iter.hasNext()){
+            if(iter.ptr.next == null)
+                output += iter.next();
+            else
+                output += iter.next() + ", ";
+        }
+        return output + "]";
+
     }
 
 }
