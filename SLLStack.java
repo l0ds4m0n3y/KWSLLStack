@@ -4,11 +4,13 @@
  * CS 270
  */
 
+import java.util.ConcurrentModificationException;
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
 public class SLLStack<E> implements PureStack<E>, Iterable<E>{
     private Node<E> topOfStack;
+    private int modifications = 0;
 
     private static class Node<E> {
         private E data;
@@ -45,6 +47,7 @@ public class SLLStack<E> implements PureStack<E>, Iterable<E>{
     @Override
     public void push(E element) {
         topOfStack = new Node<E>(element, topOfStack);
+        modifications++;
     }
 
     /**
@@ -57,6 +60,7 @@ public class SLLStack<E> implements PureStack<E>, Iterable<E>{
         if(this.empty()) throw new NoSuchElementException();
         Node<E> temp = topOfStack;
         topOfStack = topOfStack.next;
+        modifications++;
         return temp.data;
     }
 
@@ -82,6 +86,7 @@ public class SLLStack<E> implements PureStack<E>, Iterable<E>{
 
     private class StackIter implements Iterator<E>{
         Node<E> ptr = topOfStack;
+        private int expectedModifications = modifications;
         
         /**
          * @return true - if an element exists in front of the ptr of the iterator
@@ -100,6 +105,7 @@ public class SLLStack<E> implements PureStack<E>, Iterable<E>{
             if(!hasNext()){
                 throw new NoSuchElementException();
             }
+            if(expectedModifications != modifications) throw new ConcurrentModificationException();
             Node<E> temp = ptr;
             ptr = ptr.next;
             return temp.data;

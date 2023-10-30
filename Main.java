@@ -7,7 +7,7 @@ public class Main {
         myStack.push(3);
         myStack.push(4);
         while(!myStack.empty()){
-            myStack.pop();
+            myStack.peek();
             System.out.println(myStack.toString());
         }
         myStack.peek();
