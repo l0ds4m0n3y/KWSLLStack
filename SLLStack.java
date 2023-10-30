@@ -1,17 +1,21 @@
+/*
+ * Name: David Luna
+ * Lab: 6
+ * CS 270
+ */
+
 import java.util.Iterator;
 import java.util.NoSuchElementException;
 
-public class SLLStack<E> implements PureStack, Iterable{
+public class SLLStack<E> implements PureStack<E>, Iterable<E>{
     private Node<E> topOfStack;
 
     private static class Node<E> {
-        /** The data value. */
         private E data;
-        /** The link */
         private Node<E> next = null;
 
         /**
-         * Construct a node with the given data value and link
+         * Constructs a node with the given data value and link
          * @param data - The data value 
          * @param next - The link
          */
@@ -19,51 +23,78 @@ public class SLLStack<E> implements PureStack, Iterable{
             this.data = data;
             this.next = next;
         }
-
-        /**
-         * Construct a node with the given data value
-         * @param data - The data value 
-         */
-        public Node(E data) {
-            this(data, null);
-        }
     }
     
+    /**
+	 *  Determines if the stack has no elements.
+	 *
+	 *  @return true - if the stack has no elements; otherwise,
+	 *                          return false.
+	 *
+	 */
     @Override
     public boolean empty() {
         return topOfStack == null;
     }
-    
+
+    /**
+	 *  Inserts a specified element on the top of the stack.
+	 *  The averageTime(n) is constant and worstTime(n) is O(n).
+	 *  @param element - the element to be pushed.
+	 */
     @Override
-    public void push(Object element) {
-        topOfStack = new Node<E>((E)element, topOfStack);
+    public void push(E element) {
+        topOfStack = new Node<E>(element, topOfStack);
     }
-    
+
+    /**
+	 *  Removes the top element from the stack.
+	 *  @return - the element removed.
+	 *  @throws NoSuchElementException - if this PureStack object is empty.
+	 */ 
     @Override
-    public Object pop() {
+    public E pop() {
+        if(this.empty()) throw new NoSuchElementException();
         Node<E> temp = topOfStack;
         topOfStack = topOfStack.next;
         return temp.data;
     }
-    
+
+    /**
+	 *  Returns the top element on the stack.
+	 *  @return - the element returned.
+	 *  @throws NoSuchElementException - if this PureStack object is empty.
+	 */	
     @Override
-    public Object peek() {
+    public E peek() {
+        if(this.empty()) throw new NoSuchElementException();
         return topOfStack.data;
     }
 
+    /**
+     * Returns a special iterator for the stack.
+     * @return Iterator
+     */
     @Override
     public Iterator<E> iterator() {
         return new StackIter();
     }
 
-    private class StackIter implements Iterator{
+    private class StackIter implements Iterator<E>{
         Node<E> ptr = topOfStack;
-
+        
+        /**
+         * @return true - if an element exists in front of the ptr of the iterator
+         * else false if null 
+         */
         @Override
         public boolean hasNext() {
             return ptr != null;
         }
-
+        /**
+         * moves the iterator forward and 
+         * @return the item that the iterator walked over
+         */
         @Override
         public E next() {
             if(!hasNext()){
@@ -76,18 +107,19 @@ public class SLLStack<E> implements PureStack, Iterable{
         
     }
 
+    /**
+     * @return String containing all elements in the stack as a list
+     */
     @Override
     public String toString(){
+        StringBuilder output = new StringBuilder("[");
         StackIter iter = (SLLStack<E>.StackIter) this.iterator();
-        String output = "[";
-        while(iter.hasNext()){
-            if(iter.ptr.next == null)
-                output += iter.next();
-            else
-                output += iter.next() + ", ";
+        while (iter.hasNext()) {
+            output.append(iter.next() + ", ");
         }
-        return output + "]";
-
+        if(!this.empty())
+            output.delete(output.length() - 2, output.length());
+        output.append("]");
+        return output.toString();
     }
-
 }
